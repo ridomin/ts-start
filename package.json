@@ -4,9 +4,13 @@
   "description": "",
   "scripts": {
     "start": "tsc && node dist/main.js",
-    "clean" : "rm -rf ./dist/"
+    "clean": "rm -rf ./dist/"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^13.13.0",
+    "ms-rest": "^2.5.4"
+  }
 }
