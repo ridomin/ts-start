@@ -1,8 +1,6 @@
 import * as msRest  from '@azure/ms-rest-js'
 import {IoTHubTokenCredentials} from './iothub_token_credentials'
 
-import * as Mappers from "./mappers";
-
 const connectionString : string = process.env.IOTHUB_CONNECTION_STRING as string
 
 type DigitalTwinGetResponse = {
@@ -57,7 +55,7 @@ class DTClient extends msRest.ServiceClient {
           };
 
 
-        let serializer : msRest.Serializer = new msRest.Serializer(Mappers)
+        //let serializer : msRest.Serializer = new msRest.Serializer(Mappers)
         let getDTOpSpec: msRest.OperationSpec = {
             httpMethod : "GET",
             path: '/digitalTwins/{digitalTwinId}',
@@ -74,7 +72,7 @@ class DTClient extends msRest.ServiceClient {
                 },
                 default: {}
             },
-            serializer
+            serializer : new msRest.Serializer()
         }
         return this.sendOperationRequest({digitalTwinId}, getDTOpSpec) as Promise<DigitalTwinGetResponse>             
     }
