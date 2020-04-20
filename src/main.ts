@@ -16,7 +16,17 @@ type DigitalTwinGetResponse = {
 class DTClient extends msRest.ServiceClient {
     apiVersion?: string;
     credentials: msRest.ServiceClientCredentials
-    constructor(creds: IoTHubTokenCredentials, options?: msRest.ServiceClientOptions) {
+
+    constructor(creds: IoTHubTokenCredentials) {
+        let options : msRest.ServiceClientOptions = {
+            deserializationContentTypes: { // application/ld+json isn't supported by autorest by default, which is why we need these options
+                json: [
+                'application/ld+json',
+                'application/json',
+                'text/json'
+                ]
+            }
+        }
         super(creds, options)
         this.apiVersion = '2020-05-31-preview'
         this.credentials = creds
@@ -73,16 +83,10 @@ class DTClient extends msRest.ServiceClient {
 
 async function main(){
     let iotHubCreds = new IoTHubTokenCredentials(connectionString)
-    let sc : DTClient = new DTClient(iotHubCreds, {
-        deserializationContentTypes: { // application/ld+json isn't supported by autorest by default, which is why we need these options
-            json: [
-            'application/ld+json',
-            'application/json',
-            'text/json'
-            ]
-        }
-    })
-    let twin = await sc.getDigitalTwin("rido-ppr-node")
-    console.log(twin)
+    let sc : DTClient = new DTClient(iotHubCreds)
+    let twinResponse : DigitalTwinGetResponse = await sc.getDigitalTwin("rido-ppr-node")
+    let twin = twinResponse._response.parsedBody
+
+    console.log(twin.$metadata.$model)
 }
 main().catch(e=>console.log(e))
