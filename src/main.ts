@@ -5,8 +5,7 @@ const connectionString = process.env.IOTHUB_CONNECTION_STRING as string
 
 const main = async () =>{
     let sc = new DTClient(connectionString)
-    let twinResponse = await sc.getDigitalTwin("rido-ppr")
-    let twin  = twinResponse._response.parsedBody
+    let twin = await sc.getDigitalTwin("rido-ppr")
     //console.log(twin)
     console.log(twin.$metadata.$model)
     

@@ -1,17 +1,19 @@
 import * as msRest from '@azure/ms-rest-js'
 import { IoTHubTokenCredentials } from './iothub_token_credentials'
 
+export type DigitalTwin = {
+  $dtid: string,
+  $metadata: {
+    $model: string
+  },
+  [key: string]: any
+}
+
 export type DigitalTwinGetResponse = {
   body: any
   _response: msRest.HttpResponse & {
     bodyAsText: string
-    parsedBody: {
-      $dtid: string,
-      $metadata: {
-        $model: string
-      },
-      [key: string]: any
-    }
+    parsedBody: DigitalTwin
   }
 }
 
@@ -35,7 +37,13 @@ export class DTClient extends msRest.ServiceClient {
     this.credentials = creds
     this.baseUri = 'https://' + creds.getHubName()
   }
-  getDigitalTwin(digitalTwinId: string): Promise<DigitalTwinGetResponse> {
+  
+  async getDigitalTwin(digitalTwinId: string): Promise<DigitalTwin> {
+    const twin = await this.getDigitalTwinResponse(digitalTwinId)
+    return twin._response.parsedBody
+  }
+
+  getDigitalTwinResponse(digitalTwinId: string): Promise<DigitalTwinGetResponse> {
     let digitalTwinIdParam: msRest.OperationURLParameter = {
       parameterPath: "digitalTwinId",
       mapper: {
